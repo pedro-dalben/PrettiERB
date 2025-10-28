@@ -1,0 +1,73 @@
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <%= form_with model: @user, 
+                url: user_path(@user),
+                method: :patch,
+                local: true,
+                class: "space-y-6" do |f| %>
+    
+    <%= render "shared/form_errors", object: @user %>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="form-group">
+        <%= f.label :first_name, class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_field :first_name,
+                         class: "mt-1 block w-full rounded-md border-gray-300",
+                         placeholder: "Digite seu nome",
+                         required: true %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :last_name, class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_field :last_name,
+                         class: "mt-1 block w-full rounded-md border-gray-300",
+                         required: true %>
+      </div>
+    </div>
+
+    <%= f.fields_for :addresses do |address_form| %>
+      <div class="border rounded-lg p-4 space-y-4" data-controller="address">
+        <h3 class="text-lg font-semibold">
+          <%= address_form.object.persisted? ? "Editar Endereço" : "Novo Endereço" %>
+        </h3>
+
+        <%= address_form.hidden_field :id %>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <%= address_form.text_field :street,
+                                      class: "form-input",
+                                      placeholder: "Rua",
+                                      data: { address_target: "street" } %>
+          
+          <%= address_form.text_field :number,
+                                      class: "form-input w-24",
+                                      placeholder: "Nº" %>
+          
+          <%= address_form.text_field :complement,
+                                      class: "form-input",
+                                      placeholder: "Complemento" %>
+        </div>
+
+        <% if address_form.object.persisted? %>
+          <%= address_form.check_box :_destroy,
+                                     class: "hidden",
+                                     data: { action: "address#toggleDestroy" } %>
+          <%= address_form.label :_destroy,
+                                "Remover este endereço",
+                                class: "text-red-600 cursor-pointer hover:text-red-800" %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="flex items-center justify-between">
+      <%= link_to "Cancelar",
+                  cancel_path,
+                  class: "btn btn-secondary",
+                  data: { turbo_confirm: "Tem certeza que deseja cancelar?" } %>
+      
+      <%= f.submit (@user.persisted? ? "Atualizar" : "Criar"),
+                   class: "btn btn-primary",
+                   data: { disable_with: "Processando..." } %>
+    </div>
+  <% end %>
+</div>
+

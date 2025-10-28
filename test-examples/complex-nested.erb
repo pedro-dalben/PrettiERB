@@ -1,0 +1,95 @@
+<div class="dashboard" data-controller="dashboard" data-dashboard-refresh-interval-value="30000">
+  <%= turbo_frame_tag "dashboard-stats", src: dashboard_stats_path, loading: :lazy do %>
+    <%= render "shared/loading_skeleton" %>
+  <% end %>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <% @categories.each do |category| %>
+      <div class="card" data-controller="collapsible">
+        <div class="card-header"
+             data-action="click->collapsible#toggle"
+             data-collapsible-target="trigger">
+          <h3 class="text-lg font-semibold">
+            <%= category.name %>
+            <span class="badge">
+              <%= category.items_count %>
+            </span>
+          </h3>
+          
+          <%= inline_svg_tag "icons/chevron-down.svg",
+                            class: "w-5 h-5 transition-transform",
+                            data: { collapsible_target: "icon" } %>
+        </div>
+
+        <div class="card-body hidden" data-collapsible-target="content">
+          <% if category.items.any? %>
+            <ul class="space-y-2">
+              <% category.items.group_by(&:priority).each do |priority, items| %>
+                <li class="border-l-4 <%= priority_border_class(priority) %> pl-3">
+                  <h4 class="text-sm font-medium text-gray-700">
+                    <%= t("priority.#{priority}") %>
+                  </h4>
+                  
+                  <ul class="mt-2 space-y-1">
+                    <% items.each do |item| %>
+                      <li class="flex items-center justify-between">
+                        <%= link_to item.title,
+                                    item_path(item),
+                                    class: "text-sm hover:text-indigo-600 flex-1" %>
+                        
+                        <div class="flex items-center space-x-2">
+                          <% if item.assignee.present? %>
+                            <%= image_tag item.assignee.avatar_url,
+                                         class: "w-6 h-6 rounded-full",
+                                         title: item.assignee.name,
+                                         alt: item.assignee.name %>
+                          <% end %>
+
+                          <% case item.status %>
+                          <% when 'completed' %>
+                            <span class="text-green-600">
+                              <%= inline_svg_tag "icons/check.svg", class: "w-4 h-4" %>
+                            </span>
+                          <% when 'in_progress' %>
+                            <%= content_tag :div,
+                                          class: "animate-spin text-blue-600" do %>
+                              <%= inline_svg_tag "icons/spinner.svg", class: "w-4 h-4" %>
+                            <% end %>
+                          <% when 'blocked' %>
+                            <%= content_tag :span,
+                                          class: "text-red-600",
+                                          title: item.blocked_reason,
+                                          data: { tooltip: "true" } do %>
+                              <%= inline_svg_tag "icons/alert.svg", class: "w-4 h-4" %>
+                            <% end %>
+                          <% end %>
+                        </div>
+                      </li>
+                    <% end %>
+                  </ul>
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            <div class="text-center py-8 text-gray-500">
+              <%= t(".no_items_in_category") %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <%= javascript_tag defer: true do %>
+    document.addEventListener('turbo:load', () => {
+      const dashboard = document.querySelector('[data-controller="dashboard"]');
+      if (dashboard) {
+        const interval = <%= @refresh_interval || 30000 %>;
+        setInterval(() => {
+          dashboard.dispatchEvent(new CustomEvent('refresh'));
+        }, interval);
+      }
+    });
+  <% end %>
+</div>
+

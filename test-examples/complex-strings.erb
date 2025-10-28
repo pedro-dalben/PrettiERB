@@ -1,0 +1,56 @@
+<div class="content">
+  <%# Testes com strings complexas %>
+  
+  <%= link_to "Click here",
+              path_with_params(id: 123, q: "search \"with\" quotes"),
+              class: "btn",
+              data: { 
+                turbo: true,
+                confirm: "Are you sure? This can't be undone!",
+                custom: "value with 'nested' quotes"
+              } %>
+
+  <%= form_with url: search_path, method: :get do |f| %>
+    <%= f.text_field :q,
+                     placeholder: "Search for 'items' or \"products\"...",
+                     value: params[:q] || "",
+                     class: "form-input" %>
+  <% end %>
+
+  <% @messages.each do |msg| %>
+    <div class="message">
+      <%= sanitize msg.body,
+                   tags: %w(p br strong em a),
+                   attributes: %w(href title class) %>
+      
+      <% if msg.metadata.present? %>
+        <%= content_tag :pre,
+                       JSON.pretty_generate(msg.metadata),
+                       class: "code-block" %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%= javascript_tag do %>
+    const config = {
+      apiUrl: "<%= ENV['API_URL'] %>",
+      features: <%= raw @features.to_json %>,
+      messages: {
+        confirm: "<%= j t('.confirm_message') %>",
+        error: "<%= j t('.error_message') %>"
+      }
+    };
+    
+    window.initApp(config);
+  <% end %>
+
+  <%= render "shared/modal" do %>
+    <h2><%= t('.modal_title', name: @user.name) %></h2>
+    <p>
+      <%= t('.modal_description',
+            count: @items.count,
+            date: l(@date, format: :long)) %>
+    </p>
+  <% end %>
+</div>
+

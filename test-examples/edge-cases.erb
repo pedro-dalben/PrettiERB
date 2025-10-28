@@ -1,0 +1,97 @@
+<%# Edge case 1: ERB dentro de atributos %>
+<div data-value="<%= @value %>" class="<%= active? ? 'active' : 'inactive' %>">
+  Content
+</div>
+
+<%# Edge case 2: Comentários entre atributos %>
+<button 
+  type="button"
+  <%# This is a comment %>
+  class="btn"
+  <%= "data-turbo='false'" if @disable_turbo %>
+  data-action="click->handler#action">
+  Click
+</button>
+
+<%# Edge case 3: Nested blocks deeply %>
+<% if @user.present? %>
+  <% @user.roles.each do |role| %>
+    <% if role.active? %>
+      <% role.permissions.each do |permission| %>
+        <% unless permission.revoked? %>
+          <div class="permission">
+            <%= permission.name %>
+          </div>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<%# Edge case 4: Multiple ERB tags on same line %>
+<span><%= @first %> - <%= @second %> - <%= @third %></span>
+
+<%# Edge case 5: ERB with complex Ruby %>
+<%= content_tag :div, 
+                class: ["container", ("active" if @active), @custom_class].compact.join(" "),
+                data: { 
+                  controller: "dropdown",
+                  dropdown_id_value: @id,
+                  dropdown_options_value: @options.to_json
+                } do %>
+  <%= yield %>
+<% end %>
+
+<%# Edge case 6: Strings com aspas escapadas %>
+<%= link_to "Text with \"quotes\" inside",
+            path,
+            title: "Title with 'single' quotes",
+            data: { confirm: "Are you \"really\" sure?" } %>
+
+<%# Edge case 7: Arrays e Hashes complexos %>
+<%= form_with model: @object,
+              url: polymorphic_path([@parent, @object]),
+              html: { 
+                class: ["form", "form-#{@type}"],
+                data: {
+                  controller: "form-validation",
+                  form_validation_rules_value: {
+                    name: { required: true, min: 3 },
+                    email: { required: true, format: "email" }
+                  }.to_json
+                }
+              } do |f| %>
+  <%= f.submit %>
+<% end %>
+
+<%# Edge case 8: Case statement %>
+<div class="status">
+  <% case @record.status %>
+  <% when 'draft' %>
+    <span class="badge-draft">Draft</span>
+  <% when 'published' %>
+    <span class="badge-published">Published</span>
+  <% when 'archived' %>
+    <span class="badge-archived">Archived</span>
+  <% else %>
+    <span class="badge-unknown">Unknown</span>
+  <% end %>
+</div>
+
+<%# Edge case 9: Render com bloco e locals %>
+<%= render layout: "shared/modal",
+           locals: { title: @title, size: "large" } do %>
+  <div class="modal-content">
+    <%= render "form", object: @object %>
+  </div>
+<% end %>
+
+<%# Edge case 10: Tag autoclose %>
+<input type="text" 
+       name="user[email]"
+       value="<%= @user.email %>"
+       class="form-input" />
+
+<br />
+<hr />
+

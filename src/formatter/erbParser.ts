@@ -55,26 +55,26 @@ export class ErbParser {
             }
 
             const trimmedLine = line.trim();
-            
+
             if (pendingErbTag) {
                 pendingErbTag.content += '\n' + line;
-                
+
                 if (line.includes('%>')) {
                     const erbContent = pendingErbTag.content.substring(
                         pendingErbTag.content.indexOf('<%') + 2,
                         pendingErbTag.content.lastIndexOf('%>')
                     ).trim();
-                    
+
                     const erbToken = this.parseErbContent(erbContent, pendingErbTag.startLine, pendingErbTag.startColumn);
                     tokens.push(erbToken);
                     pendingErbTag = null;
                 }
                 continue;
             }
-            
+
             if (pendingHtmlTag) {
                 pendingHtmlTag.content += '\n' + line;
-                
+
                 if (this.isHtmlTagComplete(pendingHtmlTag.content)) {
                     tokens.push({
                         type: 'html',
