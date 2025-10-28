@@ -12,3 +12,4 @@ debug_*.js
 test_*.js
 .env
 
+.dev-docs/
