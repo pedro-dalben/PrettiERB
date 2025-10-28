@@ -1,8 +1,21 @@
+<div align="center">
+
 # PrettiERB
 
-![PrettiERB Logo](logo.png)
+### Complete ERB Formatter & Indenter for VS Code
 
-A comprehensive VS Code extension for formatting and indenting ERB (Embedded Ruby) files following Ruby programming best practices.
+[![Version](https://img.shields.io/vscode-marketplace/v/pedro-dalben.prettierb.svg?style=flat-square&label=VS%20Code%20Marketplace&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=pedro-dalben.prettierb)
+[![Installs](https://img.shields.io/vscode-marketplace/i/pedro-dalben.prettierb.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=pedro-dalben.prettierb)
+[![Rating](https://img.shields.io/vscode-marketplace/r/pedro-dalben.prettierb.svg?style=flat-square)](https://marketplace.visualstudio.com/items?itemName=pedro-dalben.prettierb)
+[![GitHub](https://img.shields.io/github/stars/pedro-dalben/PrettiERB?style=flat-square&logo=github)](https://github.com/pedro-dalben/PrettiERB)
+
+A comprehensive VS Code extension for formatting and indenting ERB (Embedded Ruby) files with intelligent indentation and Ruby code formatting.
+
+[Install](https://marketplace.visualstudio.com/items?itemName=pedro-dalben.prettierb) • [Documentation](#usage) • [Report Bug](https://github.com/pedro-dalben/PrettiERB/issues) • [Request Feature](https://github.com/pedro-dalben/PrettiERB/issues)
+
+</div>
+
+---
 
 ## Features
 
