@@ -1,5 +1,21 @@
 # Change Log - PrettiERB
 
+## [1.0.3] - 2025-10-28
+
+### Corrigido
+- 🐛 **Correção crítica de formatação de tags HTML multilinha**
+  - Tags HTML que abrangem múltiplas linhas agora são preservadas corretamente
+  - Atributos permanecem dentro das tags (não são mais separados ou movidos)
+  - Corrigido bug onde `class` e outros atributos apareciam antes do nome da tag
+  - Parser agora reconhece tags multilinha como um único token
+  - Implementado `formatOpeningTag()` com indentação correta para atributos
+  - Garantida geração de HTML válido em todos os casos
+  - Regex atualizada para suportar tags com quebras de linha
+
+### Documentação
+- 📚 Adicionado documento técnico `BUGFIX-MULTILINE-TAGS.md` com detalhes da correção
+- 📚 Adicionados exemplos de teste para tags multilinha
+
 ## [1.0.0] - 2024-10-28
 
 ### Adicionado
