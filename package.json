@@ -2,7 +2,7 @@
   "name": "prettierb",
   "displayName": "PrettiERB",
   "description": "Complete formatter and indenter for ERB (Embedded Ruby) files with intelligent indentation and Ruby code formatting",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "pedro-dalben",
   "icon": "logo.png",
   "author": {
@@ -42,8 +42,17 @@
     "languages": [
       {
         "id": "erb",
-        "aliases": ["ERB", "erb"],
-        "extensions": [".erb", ".html.erb", ".text.erb", ".js.erb", ".css.erb"],
+        "aliases": [
+          "ERB",
+          "erb"
+        ],
+        "extensions": [
+          ".erb",
+          ".html.erb",
+          ".text.erb",
+          ".js.erb",
+          ".css.erb"
+        ],
         "configuration": "./language-configuration.json"
       }
     ],
@@ -93,7 +102,13 @@
         },
         "erbFormatter.logLevel": {
           "type": "string",
-          "enum": ["debug", "info", "warn", "error", "none"],
+          "enum": [
+            "debug",
+            "info",
+            "warn",
+            "error",
+            "none"
+          ],
           "default": "none",
           "description": "Nível de log para debugging (none por padrão)"
         }
