@@ -1,0 +1,26 @@
+<aside
+  data-controller="sidebar"
+  data-action="click@window->sidebar#outside"
+  class="sidebar fixed top-0 left-0">
+  <div class="header">
+    <span>Content</span>
+  </div>
+</aside>
+
+<button
+  type="button"
+  data-action="click->modal#open"
+  class="btn btn-primary"
+  aria-label="Open Modal">
+  Click me
+</button>
+
+<div
+  data-controller="dropdown"
+  data-dropdown-target="container"
+  class="dropdown-menu hidden">
+  <ul class="menu-items">
+    <li>Item 1</li>
+    <li>Item 2</li>
+  </ul>
+</div>

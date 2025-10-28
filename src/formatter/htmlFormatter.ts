@@ -31,24 +31,50 @@ export class HtmlFormatter {
 
         const indent = this.getIndent(indentLevel, options);
 
-        // Se é uma tag de abertura, aplicar indentação
         if (this.isOpeningTag(trimmed)) {
-            return `${indent}${trimmed}`;
+            return this.formatOpeningTag(trimmed, indentLevel, options);
         }
 
-        // Se é uma tag de fechamento, aplicar indentação reduzida
         if (this.isClosingTag(trimmed)) {
             const reducedIndent = this.getIndent(Math.max(0, indentLevel - 1), options);
             return `${reducedIndent}${trimmed}`;
         }
 
-        // Conteúdo de texto
         if (this.isTextContent(trimmed)) {
             const textIndent = this.getIndent(indentLevel + 1, options);
             return `${textIndent}${trimmed}`;
         }
 
         return `${indent}${trimmed}`;
+    }
+
+    private formatOpeningTag(tag: string, indentLevel: number, options: FormattingOptions): string {
+        const indent = this.getIndent(indentLevel, options);
+
+        if (!tag.includes('\n')) {
+            return `${indent}${tag}`;
+        }
+
+        const lines = tag.split('\n');
+        const formattedLines: string[] = [];
+
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) {
+                continue;
+            }
+
+            if (i === 0) {
+                formattedLines.push(`${indent}${line}`);
+            } else if (line === '>') {
+                formattedLines.push(`${indent}${line}`);
+            } else {
+                const attrIndent = this.getIndent(indentLevel, options) + '  ';
+                formattedLines.push(`${attrIndent}${line}`);
+            }
+        }
+
+        return formattedLines.join('\n');
     }
 
     /**
@@ -74,8 +100,16 @@ export class HtmlFormatter {
         return currentLevel;
     }
 
+    isMultilineTag(content: string): boolean {
+        return content.includes('\n');
+    }
+
     private isOpeningTag(content: string): boolean {
-        return /^<[^\/!][^>]*>$/.test(content.trim());
+        const trimmed = content.trim();
+        if (trimmed.includes('\n')) {
+            return /^<[^\/!][\s\S]*>$/.test(trimmed);
+        }
+        return /^<[^\/!][^>]*>$/.test(trimmed);
     }
 
     private isClosingTag(content: string): boolean {
@@ -83,7 +117,8 @@ export class HtmlFormatter {
     }
 
     private isSelfClosing(content: string): boolean {
-        return content.endsWith('/>') || content.endsWith(' />');
+        const trimmed = content.trim();
+        return trimmed.endsWith('/>') || trimmed.endsWith(' />');
     }
 
     private isTextContent(content: string): boolean {
@@ -91,7 +126,7 @@ export class HtmlFormatter {
     }
 
     private extractTagName(tag: string): string | null {
-        const match = tag.match(/^<([a-zA-Z][a-zA-Z0-9]*)/);
+        const match = tag.match(/^<([a-zA-Z][a-zA-Z0-9]*)/s);
         return match ? match[1].toLowerCase() : null;
     }
 

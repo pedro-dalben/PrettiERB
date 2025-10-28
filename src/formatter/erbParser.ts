@@ -32,22 +32,62 @@ export class ErbParser {
     parse(text: string): ErbToken[] {
         const tokens: ErbToken[] = [];
         const lines = text.split('\n');
+        let pendingHtmlTag: { content: string, startLine: number, startColumn: number } | null = null;
 
         for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
             const line = lines[lineIndex];
 
             if (this.isBlankLine(line)) {
-                tokens.push({
-                    type: 'blank_line',
-                    content: '',
-                    line: lineIndex + 1,
-                    column: 0
-                });
+                if (pendingHtmlTag) {
+                    pendingHtmlTag.content += '\n';
+                } else {
+                    tokens.push({
+                        type: 'blank_line',
+                        content: '',
+                        line: lineIndex + 1,
+                        column: 0
+                    });
+                }
+                continue;
+            }
+
+            const trimmedLine = line.trim();
+
+            if (pendingHtmlTag) {
+                pendingHtmlTag.content += '\n' + line;
+
+                if (this.isHtmlTagComplete(pendingHtmlTag.content)) {
+                    tokens.push({
+                        type: 'html',
+                        content: pendingHtmlTag.content.trim(),
+                        line: pendingHtmlTag.startLine,
+                        column: pendingHtmlTag.startColumn
+                    });
+                    pendingHtmlTag = null;
+                }
+                continue;
+            }
+
+            if (this.startsHtmlTag(trimmedLine) && !this.isHtmlTagComplete(line)) {
+                pendingHtmlTag = {
+                    content: line,
+                    startLine: lineIndex + 1,
+                    startColumn: line.indexOf('<')
+                };
                 continue;
             }
 
             const lineTokens = this.parseLine(line, lineIndex + 1);
             tokens.push(...lineTokens);
+        }
+
+        if (pendingHtmlTag) {
+            tokens.push({
+                type: 'html',
+                content: pendingHtmlTag.content.trim(),
+                line: pendingHtmlTag.startLine,
+                column: pendingHtmlTag.startColumn
+            });
         }
 
         return tokens;
@@ -202,5 +242,61 @@ export class ErbParser {
 
     private isBlankLine(line: string): boolean {
         return line.trim() === '';
+    }
+
+    private startsHtmlTag(line: string): boolean {
+        return /^\s*<[a-zA-Z][a-zA-Z0-9]*/.test(line);
+    }
+
+    private isHtmlTagComplete(content: string): boolean {
+        let inString = false;
+        let stringChar = '';
+        let inErb = false;
+        let tagStarted = false;
+
+        for (let i = 0; i < content.length; i++) {
+            const char = content[i];
+            const nextChar = content[i + 1];
+
+            if (!inString && char === '<' && nextChar === '%') {
+                inErb = true;
+                i++;
+                continue;
+            }
+
+            if (inErb && char === '%' && nextChar === '>') {
+                inErb = false;
+                i++;
+                continue;
+            }
+
+            if (inErb) {
+                continue;
+            }
+
+            if (!inString && (char === '"' || char === "'")) {
+                inString = true;
+                stringChar = char;
+                continue;
+            }
+
+            if (inString && char === stringChar && content[i - 1] !== '\\') {
+                inString = false;
+                stringChar = '';
+                continue;
+            }
+
+            if (!inString && !inErb) {
+                if (char === '<') {
+                    tagStarted = true;
+                }
+
+                if (char === '>' && tagStarted) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
