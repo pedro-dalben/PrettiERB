@@ -1,0 +1,14 @@
+node_modules/
+out/
+.vscode-test/
+*.vsix
+.vscode/
+*.log
+.DS_Store
+coverage/
+.nyc_output/
+*.map
+debug_*.js
+test_*.js
+.env
+
