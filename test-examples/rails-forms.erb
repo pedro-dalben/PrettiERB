@@ -1,0 +1,44 @@
+<%# Rails Forms Example %>
+<div class="form-container">
+  <%= form_with model: @user, local: true, class: "user-form" do |form| %>
+    <% if @user.errors.any? %>
+      <div class="error-messages">
+        <h4><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h4>
+        <ul>
+          <% @user.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="field-group">
+      <%= form.label :name, "Full Name", class: "form-label" %>
+      <%= form.text_field :name, class: "form-control", placeholder: "Enter your name" %>
+    </div>
+
+    <div class="field-group">
+      <%= form.label :email, "Email Address", class: "form-label" %>
+      <%= form.email_field :email, class: "form-control", required: true %>
+    </div>
+
+    <div class="field-group">
+      <%= form.label :role, "User Role", class: "form-label" %>
+      <%= form.select :role, options_for_select([
+        ["Admin", "admin"],
+        ["User", "user"],
+        ["Guest", "guest"]
+      ], @user.role), { prompt: "Select a role" }, { class: "form-select" } %>
+    </div>
+
+    <div class="checkbox-group">
+      <%= form.check_box :active, class: "form-check-input" %>
+      <%= form.label :active, "Active User", class: "form-check-label" %>
+    </div>
+
+    <div class="actions">
+      <%= form.submit "Save User", class: "btn btn-primary" %>
+      <%= link_to "Cancel", users_path, class: "btn btn-secondary" %>
+    </div>
+  <% end %>
+</div>

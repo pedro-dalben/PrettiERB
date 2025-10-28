@@ -1,0 +1,86 @@
+<%# Exemplo complexo de ERB %>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title><%=@page_title||"Título Padrão"%></title>
+</head>
+<body>
+<header class="main-header">
+<nav>
+<%if user_signed_in?%>
+<ul class="nav-menu">
+<li><a href="/">Home</a></li>
+<li><a href="/profile">Perfil</a></li>
+<li><%=link_to "Sair",destroy_user_session_path,method: :delete%></li>
+</ul>
+<%else%>
+<div class="auth-links">
+<%=link_to "Entrar",new_user_session_path,class: "btn btn-primary"%>
+<%=link_to "Cadastrar",new_user_registration_path,class: "btn btn-secondary"%>
+</div>
+<%end%>
+</nav>
+</header>
+
+<main class="container">
+<%if notice%>
+<div class="alert alert-success"><%=notice%></div>
+<%end%>
+<%if alert%>
+<div class="alert alert-danger"><%=alert%></div>
+<%end%>
+
+<section class="content">
+<%case @page_type%>
+<%when "dashboard"%>
+<h1>Dashboard</h1>
+<%@widgets.each_with_index do |widget,index|%>
+<div class="widget widget-<%=index%>">
+<h3><%=widget.title%></h3>
+<%if widget.data.present?%>
+<div class="widget-content">
+<%widget.data.each do |item|%>
+<p><%=item.name%>: <%=number_to_currency(item.value)%></p>
+<%end%>
+</div>
+<%else%>
+<p class="no-data">Nenhum dado disponível</p>
+<%end%>
+</div>
+<%end%>
+<%when "profile"%>
+<h1>Meu Perfil</h1>
+<%=form_with model: @user,local: true do |form|%>
+<div class="form-group">
+<%=form.label :name,"Nome"%>
+<%=form.text_field :name,class: "form-control"%>
+</div>
+<div class="form-group">
+<%=form.label :email,"E-mail"%>
+<%=form.email_field :email,class: "form-control"%>
+</div>
+<%=form.submit "Salvar",class: "btn btn-primary"%>
+<%end%>
+<%else%>
+<h1>Página não encontrada</h1>
+<p>A página que você está procurando não existe.</p>
+<%end%>
+</section>
+</main>
+
+<footer class="main-footer">
+<p>&copy; <%=Date.current.year%> Minha Aplicação. Todos os direitos reservados.</p>
+</footer>
+
+<%# Scripts JavaScript %>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+console.log('Página carregada');
+<%if @user_data%>
+window.userData = <%=@user_data.to_json.html_safe%>;
+<%end%>
+});
+</script>
+</body>
+</html>

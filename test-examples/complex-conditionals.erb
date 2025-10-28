@@ -1,0 +1,106 @@
+<%# Complex Conditionals and Loops %>
+<div class="dashboard">
+  <% case current_user.role %>
+  <% when "admin" %>
+    <div class="admin-panel">
+      <h2>Admin Dashboard</h2>
+      <% if @users.present? %>
+        <table class="users-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @users.each_with_index do |user, index| %>
+              <tr class="<%= cycle('odd', 'even') %>">
+                <td><%= user.name %></td>
+                <td><%= user.email %></td>
+                <td>
+                  <span class="badge badge-<%= user.role %>">
+                    <%= user.role.humanize %>
+                  </span>
+                </td>
+                <td>
+                  <%= link_to "Edit", edit_user_path(user), class: "btn btn-sm btn-primary" %>
+                  <% unless user == current_user %>
+                    <%= link_to "Delete", user_path(user), method: :delete,
+                        confirm: "Are you sure?", class: "btn btn-sm btn-danger" %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <div class="empty-state">
+          <p>No users found.</p>
+          <%= link_to "Add First User", new_user_path, class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  <% when "user" %>
+    <div class="user-panel">
+      <h2>Welcome, <%= current_user.name %>!</h2>
+      <% if @posts.any? %>
+        <div class="posts-grid">
+          <% @posts.in_groups_of(3, false) do |group| %>
+            <div class="row">
+              <% group.each do |post| %>
+                <div class="col-md-4">
+                  <div class="card">
+                    <% if post.image.present? %>
+                      <%= image_tag post.image, class: "card-img-top" %>
+                    <% end %>
+                    <div class="card-body">
+                      <h5 class="card-title"><%= post.title %></h5>
+                      <p class="card-text"><%= truncate(post.content, length: 100) %></p>
+                      <%= link_to "Read More", post_path(post), class: "btn btn-primary" %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-posts">
+          <p>You haven't created any posts yet.</p>
+          <%= link_to "Create Your First Post", new_post_path, class: "btn btn-success" %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="guest-panel">
+      <h2>Welcome, Guest!</h2>
+      <p>Please <%= link_to "sign in", new_user_session_path %> or
+         <%= link_to "register", new_user_registration_path %> to access more features.</p>
+    </div>
+  <% end %>
+</div>
+
+<%# JavaScript for dynamic behavior %>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    <% if current_user&.admin? %>
+      // Admin-specific JavaScript
+      console.log('Admin dashboard loaded');
+
+      // Initialize admin features
+      <% if @users.present? %>
+        window.userCount = <%= @users.count %>;
+        window.userData = <%= @users.to_json.html_safe %>;
+      <% end %>
+    <% elsif current_user %>
+      // User-specific JavaScript
+      console.log('User dashboard loaded for <%= j current_user.name %>');
+
+      <% if @posts.any? %>
+        window.postCount = <%= @posts.count %>;
+      <% end %>
+    <% end %>
+  });
+</script>
