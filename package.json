@@ -1,7 +1,7 @@
 {
   "name": "prettierb",
   "displayName": "PrettiERB",
-  "description": "Formatador e indentador completo para arquivos ERB (Embedded Ruby)",
+  "description": "Complete formatter and indenter for ERB (Embedded Ruby) files with intelligent indentation and Ruby code formatting",
   "version": "1.0.0",
   "publisher": "pedro-dalben",
   "icon": "logo.png",
