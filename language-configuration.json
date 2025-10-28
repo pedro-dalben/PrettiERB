@@ -1,0 +1,34 @@
+{
+  "comments": {
+    "blockComment": ["<%#", "%>"]
+  },
+  "brackets": [
+    ["<%", "%>"],
+    ["<", ">"],
+    ["{", "}"],
+    ["[", "]"],
+    ["(", ")"]
+  ],
+  "autoClosingPairs": [
+    ["<%", "%>"],
+    ["<", ">"],
+    ["{", "}"],
+    ["[", "]"],
+    ["(", ")"],
+    ["\"", "\""],
+    ["'", "'"]
+  ],
+  "surroundingPairs": [
+    ["<%", "%>"],
+    ["<", ">"],
+    ["{", "}"],
+    ["[", "]"],
+    ["(", ")"],
+    ["\"", "\""],
+    ["'", "'"]
+  ],
+  "indentationRules": {
+    "increaseIndentPattern": "^\\s*(<(html|head|body|div|span|p|ul|ol|li|table|tr|td|th|form|input|select|option|textarea|script|style|if|unless|case|when|for|while|def|class|module|begin|rescue|ensure|do)\\b[^>]*>(?!.*</\\1>)|<%\\s*(if|unless|case|for|while|def|class|module|begin|do)\\b)",
+    "decreaseIndentPattern": "^\\s*(</(html|head|body|div|span|p|ul|ol|li|table|tr|td|th|form|input|select|option|textarea|script|style)>|<%\\s*(end|else|elsif|when|rescue|ensure)\\b)"
+  }
+}
