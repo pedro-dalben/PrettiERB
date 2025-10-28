@@ -1,5 +1,23 @@
 # Change Log - PrettiERB
 
+## [1.0.4] - 2025-10-28
+
+### Corrigido
+- 🐛 **Correção de indentação de tags ERB multilinha**
+  - Tags ERB (`<%= %>`) com código Ruby quebrado em múltiplas linhas agora preservam indentação correta
+  - `link_to` e outros helpers Rails com argumentos em múltiplas linhas formatados corretamente
+  - Blocos `else` e `elsif` mantêm indentação adequada para o conteúdo interno
+  - Parser trata tags ERB multilinha como um único token
+  - ERB malformado (sem `%>`) tratado graciosamente como HTML
+
+### Exemplo
+```erb
+<% if condition? %>
+  <%= link_to "Text", path,
+      class: "very-long-class-name" %>
+<% end %>
+```
+
 ## [1.0.3] - 2025-10-28
 
 ### Corrigido
