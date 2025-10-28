@@ -1,0 +1,61 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "ERB",
+  "scopeName": "text.html.erb",
+  "patterns": [
+    {
+      "include": "#erb"
+    },
+    {
+      "include": "text.html.basic"
+    }
+  ],
+  "repository": {
+    "erb": {
+      "patterns": [
+        {
+          "name": "meta.embedded.block.erb",
+          "begin": "<%+(?!>)=?",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.section.embedded.begin.erb"
+            }
+          },
+          "end": "-?%>",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.section.embedded.end.erb"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#comment"
+            },
+            {
+              "include": "source.ruby"
+            }
+          ]
+        }
+      ]
+    },
+    "comment": {
+      "patterns": [
+        {
+          "name": "comment.block.erb",
+          "begin": "<%#",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.begin.erb"
+            }
+          },
+          "end": "%>",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.end.erb"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
