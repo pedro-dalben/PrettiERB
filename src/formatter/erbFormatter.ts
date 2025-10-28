@@ -93,7 +93,17 @@ export class ErbFormatter {
                         result += `<%${token.type === 'ruby_output' ? '=' : ''} ${formattedRuby} %>`;
                     } else {
                         const indent = this.getIndent(indentLevel, options);
-                        result += `${indent}<%${token.type === 'ruby_output' ? '=' : ''} ${formattedRuby} %>`;
+                        if (token.content.includes('\n')) {
+                            const rubyLines = token.content.split('\n');
+                            const erbPrefix = `<%${token.type === 'ruby_output' ? '=' : ''} `;
+                            result += `${indent}${erbPrefix}${rubyLines[0].trim()}`;
+                            for (let i = 1; i < rubyLines.length; i++) {
+                                result += `\n${indent}    ${rubyLines[i].trim()}`;
+                            }
+                            result += ' %>';
+                        } else {
+                            result += `${indent}<%${token.type === 'ruby_output' ? '=' : ''} ${formattedRuby} %>`;
+                        }
                     }
                     break;
 
@@ -112,9 +122,15 @@ export class ErbFormatter {
                     break;
 
                 case 'ruby_block_end':
-                    indentLevel = Math.max(0, indentLevel - 1);
-                    const endIndent = this.getIndent(indentLevel, options);
+                    const isEnd = token.content.trim() === 'end';
+                    if (isEnd) {
+                        indentLevel = Math.max(0, indentLevel - 1);
+                    }
+                    const endIndent = this.getIndent(isEnd ? indentLevel : Math.max(0, indentLevel - 1), options);
                     result += `${endIndent}<% ${token.content} %>`;
+                    if (!isEnd) {
+                        indentLevel = Math.max(0, indentLevel);
+                    }
                     break;
 
                 case 'comment':

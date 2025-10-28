@@ -33,6 +33,7 @@ export class ErbParser {
         const tokens: ErbToken[] = [];
         const lines = text.split('\n');
         let pendingHtmlTag: { content: string, startLine: number, startColumn: number } | null = null;
+        let pendingErbTag: { content: string, startLine: number, startColumn: number } | null = null;
 
         for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
             const line = lines[lineIndex];
@@ -40,6 +41,8 @@ export class ErbParser {
             if (this.isBlankLine(line)) {
                 if (pendingHtmlTag) {
                     pendingHtmlTag.content += '\n';
+                } else if (pendingErbTag) {
+                    pendingErbTag.content += '\n';
                 } else {
                     tokens.push({
                         type: 'blank_line',
@@ -52,10 +55,26 @@ export class ErbParser {
             }
 
             const trimmedLine = line.trim();
-
+            
+            if (pendingErbTag) {
+                pendingErbTag.content += '\n' + line;
+                
+                if (line.includes('%>')) {
+                    const erbContent = pendingErbTag.content.substring(
+                        pendingErbTag.content.indexOf('<%') + 2,
+                        pendingErbTag.content.lastIndexOf('%>')
+                    ).trim();
+                    
+                    const erbToken = this.parseErbContent(erbContent, pendingErbTag.startLine, pendingErbTag.startColumn);
+                    tokens.push(erbToken);
+                    pendingErbTag = null;
+                }
+                continue;
+            }
+            
             if (pendingHtmlTag) {
                 pendingHtmlTag.content += '\n' + line;
-
+                
                 if (this.isHtmlTagComplete(pendingHtmlTag.content)) {
                     tokens.push({
                         type: 'html',
@@ -65,6 +84,15 @@ export class ErbParser {
                     });
                     pendingHtmlTag = null;
                 }
+                continue;
+            }
+
+            if (line.includes('<%') && !line.includes('%>')) {
+                pendingErbTag = {
+                    content: line,
+                    startLine: lineIndex + 1,
+                    startColumn: line.indexOf('<%')
+                };
                 continue;
             }
 
@@ -79,6 +107,15 @@ export class ErbParser {
 
             const lineTokens = this.parseLine(line, lineIndex + 1);
             tokens.push(...lineTokens);
+        }
+
+        if (pendingErbTag) {
+            tokens.push({
+                type: 'html',
+                content: pendingErbTag.content.trim(),
+                line: pendingErbTag.startLine,
+                column: pendingErbTag.startColumn
+            });
         }
 
         if (pendingHtmlTag) {
