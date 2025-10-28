@@ -1,0 +1,96 @@
+{
+  "ERB Output": {
+    "prefix": "erb-out",
+    "body": ["<%= $1 %>"],
+    "description": "ERB output tag"
+  },
+  "ERB Expression": {
+    "prefix": "erb-exp",
+    "body": ["<% $1 %>"],
+    "description": "ERB expression tag"
+  },
+  "ERB Comment": {
+    "prefix": "erb-comment",
+    "body": ["<%# $1 %>"],
+    "description": "ERB comment tag"
+  },
+  "ERB If Block": {
+    "prefix": "erb-if",
+    "body": [
+      "<% if $1 %>",
+      "  $2",
+      "<% end %>"
+    ],
+    "description": "ERB if block"
+  },
+  "ERB If-Else Block": {
+    "prefix": "erb-ifelse",
+    "body": [
+      "<% if $1 %>",
+      "  $2",
+      "<% else %>",
+      "  $3",
+      "<% end %>"
+    ],
+    "description": "ERB if-else block"
+  },
+  "ERB Unless Block": {
+    "prefix": "erb-unless",
+    "body": [
+      "<% unless $1 %>",
+      "  $2",
+      "<% end %>"
+    ],
+    "description": "ERB unless block"
+  },
+  "ERB Each Loop": {
+    "prefix": "erb-each",
+    "body": [
+      "<% $1.each do |$2| %>",
+      "  $3",
+      "<% end %>"
+    ],
+    "description": "ERB each loop"
+  },
+  "ERB Case Statement": {
+    "prefix": "erb-case",
+    "body": [
+      "<% case $1 %>",
+      "<% when $2 %>",
+      "  $3",
+      "<% else %>",
+      "  $4",
+      "<% end %>"
+    ],
+    "description": "ERB case statement"
+  },
+  "Rails Link To": {
+    "prefix": "erb-link",
+    "body": ["<%= link_to \"$1\", $2 %>"],
+    "description": "Rails link_to helper"
+  },
+  "Rails Form With": {
+    "prefix": "erb-form",
+    "body": [
+      "<%= form_with model: $1 do |form| %>",
+      "  $2",
+      "<% end %>"
+    ],
+    "description": "Rails form_with helper"
+  },
+  "Rails Content For": {
+    "prefix": "erb-content",
+    "body": ["<%= content_for :$1 do %>", "  $2", "<% end %>"],
+    "description": "Rails content_for helper"
+  },
+  "Rails Render Partial": {
+    "prefix": "erb-render",
+    "body": ["<%= render \"$1\"$2 %>"],
+    "description": "Rails render partial"
+  },
+  "Rails Image Tag": {
+    "prefix": "erb-image",
+    "body": ["<%= image_tag \"$1\"$2 %>"],
+    "description": "Rails image_tag helper"
+  }
+}
