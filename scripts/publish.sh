@@ -21,7 +21,7 @@ CURRENT_VERSION=$(grep '"version"' package.json | cut -d'"' -f4)
 echo "📦 Versão atual: $CURRENT_VERSION"
 echo "🔢 Tipo de atualização: $VERSION_TYPE"
 
-if ! command -v npm-version &> /dev/null; then
+if ! command -v npm &> /dev/null; then
   echo "❌ npm não encontrado. Por favor, instale o Node.js."
   exit 1
 fi
