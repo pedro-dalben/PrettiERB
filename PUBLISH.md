@@ -50,7 +50,7 @@ Antes de usar o script pela primeira vez:
    ```bash
    vsce login pedro-dalben
    ```
-   
+
    Você precisará criar um Personal Access Token em: https://dev.azure.com/
 
 3. **Verificar conexão Git:**
@@ -116,4 +116,3 @@ Para mais detalhes, consulte: [scripts/README.md](scripts/README.md)
 ---
 
 ✨ **Simples assim!** Agora você pode publicar atualizações com apenas um comando.
-

@@ -2,8 +2,8 @@
 
 ## Resumo dos Testes
 
-✅ **113 testes unitários** passando  
-✅ **9 arquivos ERB complexos** testados com sucesso  
+✅ **113 testes unitários** passando
+✅ **9 arquivos ERB complexos** testados com sucesso
 ✅ **100% de taxa de sucesso**
 
 ## Arquivos de Teste Criados
@@ -117,7 +117,7 @@ Para cada arquivo, o formatter foi validado com:
 
 ### Comentários entre atributos
 ```erb
-<button 
+<button
   type="button"
   <%# This is a comment %>
   class="btn">
@@ -133,7 +133,7 @@ Para cada arquivo, o formatter foi validado com:
 
 ### Content_tag com argumentos complexos
 ```erb
-<%= content_tag :div, 
+<%= content_tag :div,
                 class: ["container", ("active" if @active)].compact.join(" "),
                 data: { controller: "dropdown", options: @options.to_json } do %>
   <%= yield %>
@@ -181,4 +181,6 @@ O PrettiERB foi testado extensivamente com:
 - ✅ Performance excelente
 
 **A extensão está robusta e pronta para uso em produção! 🚀**
+
+
 

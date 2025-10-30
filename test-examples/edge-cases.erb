@@ -4,7 +4,7 @@
 </div>
 
 <%# Edge case 2: Comentários entre atributos %>
-<button 
+<button
   type="button"
   <%# This is a comment %>
   class="btn"
@@ -32,9 +32,9 @@
 <span><%= @first %> - <%= @second %> - <%= @third %></span>
 
 <%# Edge case 5: ERB with complex Ruby %>
-<%= content_tag :div, 
+<%= content_tag :div,
                 class: ["container", ("active" if @active), @custom_class].compact.join(" "),
-                data: { 
+                data: {
                   controller: "dropdown",
                   dropdown_id_value: @id,
                   dropdown_options_value: @options.to_json
@@ -51,7 +51,7 @@
 <%# Edge case 7: Arrays e Hashes complexos %>
 <%= form_with model: @object,
               url: polymorphic_path([@parent, @object]),
-              html: { 
+              html: {
                 class: ["form", "form-#{@type}"],
                 data: {
                   controller: "form-validation",
@@ -87,11 +87,13 @@
 <% end %>
 
 <%# Edge case 10: Tag autoclose %>
-<input type="text" 
+<input type="text"
        name="user[email]"
        value="<%= @user.email %>"
        class="form-input" />
 
 <br />
 <hr />
+
+
 

@@ -59,4 +59,3 @@ Para publicar no Marketplace, você precisa ter um Personal Access Token do Azur
 - Testes falhando não impedem a publicação (aviso será exibido)
 - Todos os commits são feitos automaticamente com mensagens padronizadas
 - O VSIX é criado mas NÃO deletado automaticamente (você pode deletar manualmente após validar)
-

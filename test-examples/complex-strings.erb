@@ -1,10 +1,10 @@
 <div class="content">
   <%# Testes com strings complexas %>
-  
+
   <%= link_to "Click here",
               path_with_params(id: 123, q: "search \"with\" quotes"),
               class: "btn",
-              data: { 
+              data: {
                 turbo: true,
                 confirm: "Are you sure? This can't be undone!",
                 custom: "value with 'nested' quotes"
@@ -22,7 +22,7 @@
       <%= sanitize msg.body,
                    tags: %w(p br strong em a),
                    attributes: %w(href title class) %>
-      
+
       <% if msg.metadata.present? %>
         <%= content_tag :pre,
                        JSON.pretty_generate(msg.metadata),
@@ -40,7 +40,7 @@
         error: "<%= j t('.error_message') %>"
       }
     };
-    
+
     window.initApp(config);
   <% end %>
 
@@ -53,4 +53,6 @@
     </p>
   <% end %>
 </div>
+
+
 

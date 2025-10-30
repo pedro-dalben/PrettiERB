@@ -15,7 +15,7 @@
               <%= category.items_count %>
             </span>
           </h3>
-          
+
           <%= inline_svg_tag "icons/chevron-down.svg",
                             class: "w-5 h-5 transition-transform",
                             data: { collapsible_target: "icon" } %>
@@ -29,14 +29,14 @@
                   <h4 class="text-sm font-medium text-gray-700">
                     <%= t("priority.#{priority}") %>
                   </h4>
-                  
+
                   <ul class="mt-2 space-y-1">
                     <% items.each do |item| %>
                       <li class="flex items-center justify-between">
                         <%= link_to item.title,
                                     item_path(item),
                                     class: "text-sm hover:text-indigo-600 flex-1" %>
-                        
+
                         <div class="flex items-center space-x-2">
                           <% if item.assignee.present? %>
                             <%= image_tag item.assignee.avatar_url,
@@ -92,4 +92,6 @@
     });
   <% end %>
 </div>
+
+
 

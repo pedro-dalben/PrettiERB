@@ -73,4 +73,3 @@ git push origin master
 echo "✅ Publicação concluída com sucesso!"
 echo "📦 Versão $NEW_VERSION publicada no Marketplace"
 echo "🔗 https://marketplace.visualstudio.com/items?itemName=pedro-dalben.prettierb"
-

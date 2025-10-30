@@ -2,13 +2,13 @@
   <% @collection_1.each do |item_1| %>
     <div class="level-2" data-id="<%= item_1.id %>">
       <h2><%= item_1.title %></h2>
-      
+
       <% if item_1.children.any? %>
         <ul class="level-3">
           <% item_1.children.each do |item_2| %>
             <li>
               <%= link_to item_2.name, item_path(item_2) %>
-              
+
               <% if can? :edit, item_2 %>
                 <div class="actions level-4">
                   <%= form_with model: item_2,
@@ -22,7 +22,7 @@
                             <%= meta_f.text_field key,
                                                  value: item_2.metadata[key],
                                                  class: "input" %>
-                            
+
                             <% if item_2.validations[key].present? %>
                               <ul class="validations level-6">
                                 <% item_2.validations[key].each do |rule| %>
@@ -36,7 +36,7 @@
                         <% end %>
                       <% end %>
                     <% end %>
-                    
+
                     <%= f.submit "Save", class: "btn" %>
                   <% end %>
                 </div>
@@ -50,4 +50,6 @@
     </div>
   <% end %>
 </div>
+
+
 

@@ -1,12 +1,12 @@
 <div class="max-w-4xl mx-auto px-4 py-8">
-  <%= form_with model: @user, 
+  <%= form_with model: @user,
                 url: user_path(@user),
                 method: :patch,
                 local: true,
                 class: "space-y-6" do |f| %>
-    
+
     <%= render "shared/form_errors", object: @user %>
-    
+
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="form-group">
         <%= f.label :first_name, class: "block text-sm font-medium text-gray-700" %>
@@ -31,17 +31,17 @@
         </h3>
 
         <%= address_form.hidden_field :id %>
-        
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <%= address_form.text_field :street,
                                       class: "form-input",
                                       placeholder: "Rua",
                                       data: { address_target: "street" } %>
-          
+
           <%= address_form.text_field :number,
                                       class: "form-input w-24",
                                       placeholder: "Nº" %>
-          
+
           <%= address_form.text_field :complement,
                                       class: "form-input",
                                       placeholder: "Complemento" %>
@@ -63,11 +63,13 @@
                   cancel_path,
                   class: "btn btn-secondary",
                   data: { turbo_confirm: "Tem certeza que deseja cancelar?" } %>
-      
+
       <%= f.submit (@user.persisted? ? "Atualizar" : "Criar"),
                    class: "btn btn-primary",
                    data: { disable_with: "Processando..." } %>
     </div>
   <% end %>
 </div>
+
+
 
