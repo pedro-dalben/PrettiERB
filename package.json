@@ -2,7 +2,7 @@
   "name": "prettierb",
   "displayName": "PrettiERB",
   "description": "Complete formatter and indenter for ERB (Embedded Ruby) files with intelligent indentation and Ruby code formatting",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "publisher": "pedro-dalben",
   "icon": "logo.png",
   "author": {
@@ -111,6 +111,11 @@
           ],
           "default": "none",
           "description": "Nível de log para debugging (none por padrão)"
+        },
+        "erbFormatter.formatJavaScript": {
+          "type": "boolean",
+          "default": true,
+          "description": "Formatar JavaScript dentro de blocos <script>"
         }
       }
     }
@@ -124,6 +129,9 @@
     "test": "node ./out/test/runTest.js",
     "test:unit": "mocha out/test/unit/**/*.test.js",
     "coverage": "nyc npm run test:unit"
+  },
+  "dependencies": {
+    "prettier": "^3.0.0"
   },
   "devDependencies": {
     "@types/vscode": "^1.74.0",

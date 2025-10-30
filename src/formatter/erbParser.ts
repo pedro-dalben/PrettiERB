@@ -1,5 +1,5 @@
 export interface ErbToken {
-    type: 'html' | 'ruby_expression' | 'ruby_output' | 'ruby_output_block_start' | 'ruby_block_start' | 'ruby_block_end' | 'comment' | 'blank_line';
+    type: 'html' | 'ruby_expression' | 'ruby_output' | 'ruby_output_block_start' | 'ruby_block_start' | 'ruby_block_end' | 'comment' | 'blank_line' | 'javascript';
     content: string;
     line: number;
     column: number;
@@ -34,6 +34,9 @@ export class ErbParser {
         const lines = text.split('\n');
         let pendingHtmlTag: { content: string, startLine: number, startColumn: number } | null = null;
         let pendingErbTag: { content: string, startLine: number, startColumn: number } | null = null;
+        let insideScript = false;
+        let scriptStartLine = 0;
+        let scriptContent: string[] = [];
 
         for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
             const line = lines[lineIndex];
@@ -43,6 +46,8 @@ export class ErbParser {
                     pendingHtmlTag.content += '\n';
                 } else if (pendingErbTag) {
                     pendingErbTag.content += '\n';
+                } else if (insideScript) {
+                    scriptContent.push('');
                 } else {
                     tokens.push({
                         type: 'blank_line',
@@ -72,13 +77,46 @@ export class ErbParser {
                 continue;
             }
 
+            if (insideScript) {
+                if (trimmedLine === '</script>') {
+                    insideScript = false;
+                    const jsContent = scriptContent.join('\n').trim();
+                    if (jsContent) {
+                        tokens.push({
+                            type: 'javascript',
+                            content: jsContent,
+                            line: scriptStartLine,
+                            column: 0
+                        });
+                    }
+                    tokens.push({
+                        type: 'html',
+                        content: trimmedLine,
+                        line: lineIndex + 1,
+                        column: 0
+                    });
+                    scriptContent = [];
+                    continue;
+                } else {
+                    scriptContent.push(line);
+                    continue;
+                }
+            }
+
             if (pendingHtmlTag) {
                 pendingHtmlTag.content += '\n' + line;
 
                 if (this.isHtmlTagComplete(pendingHtmlTag.content)) {
+                    const content = pendingHtmlTag.content.trim();
+
+                    if (this.isScriptOpeningTag(content)) {
+                        insideScript = true;
+                        scriptStartLine = lineIndex + 2;
+                    }
+
                     tokens.push({
                         type: 'html',
-                        content: pendingHtmlTag.content.trim(),
+                        content: content,
                         line: pendingHtmlTag.startLine,
                         column: pendingHtmlTag.startColumn
                     });
@@ -94,6 +132,45 @@ export class ErbParser {
                     startColumn: line.indexOf('<%')
                 };
                 continue;
+            }
+
+            if (trimmedLine.startsWith('<script')) {
+                if (trimmedLine.includes('</script>')) {
+                    const startMatch = trimmedLine.match(/<script[^>]*>/);
+                    const endMatch = trimmedLine.match(/<\/script>/);
+                    if (startMatch && endMatch) {
+                        const startTag = startMatch[0];
+                        const jsContent = trimmedLine.substring(startMatch.index! + startTag.length, endMatch.index).trim();
+                        tokens.push({
+                            type: 'html',
+                            content: startTag,
+                            line: lineIndex + 1,
+                            column: 0
+                        });
+                        if (jsContent) {
+                            tokens.push({
+                                type: 'javascript',
+                                content: jsContent,
+                                line: lineIndex + 1,
+                                column: 0
+                            });
+                        }
+                        tokens.push({
+                            type: 'html',
+                            content: '</script>',
+                            line: lineIndex + 1,
+                            column: 0
+                        });
+                        continue;
+                    }
+                } else {
+                    pendingHtmlTag = {
+                        content: line,
+                        startLine: lineIndex + 1,
+                        startColumn: line.indexOf('<')
+                    };
+                    continue;
+                }
             }
 
             if (this.startsHtmlTag(trimmedLine) && !this.isHtmlTagComplete(line)) {
@@ -125,6 +202,18 @@ export class ErbParser {
                 line: pendingHtmlTag.startLine,
                 column: pendingHtmlTag.startColumn
             });
+        }
+
+        if (insideScript && scriptContent.length > 0) {
+            const jsContent = scriptContent.join('\n').trim();
+            if (jsContent) {
+                tokens.push({
+                    type: 'javascript',
+                    content: jsContent,
+                    line: scriptStartLine,
+                    column: 0
+                });
+            }
         }
 
         return tokens;
@@ -279,6 +368,10 @@ export class ErbParser {
 
     private isBlankLine(line: string): boolean {
         return line.trim() === '';
+    }
+
+    private isScriptOpeningTag(content: string): boolean {
+        return /^<script[^>]*>$/i.test(content.trim());
     }
 
     private startsHtmlTag(line: string): boolean {

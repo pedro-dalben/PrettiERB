@@ -1,12 +1,14 @@
 import { ErbParser } from './erbParser';
 import { HtmlFormatter } from './htmlFormatter';
 import { RubyFormatter } from './rubyFormatter';
+import { JavaScriptFormatter } from './javascriptFormatter';
 import { logger } from '../utils/logger';
 
 export interface FormattingOptions {
     indentSize: number;
     useTabs: boolean;
     preserveBlankLines: boolean;
+    formatJavaScript?: boolean;
 }
 
 export interface VSCodeFormattingOptions {
@@ -18,11 +20,13 @@ export class ErbFormatter {
     private parser: ErbParser;
     private htmlFormatter: HtmlFormatter;
     private rubyFormatter: RubyFormatter;
+    private javascriptFormatter: JavaScriptFormatter;
 
     constructor() {
         this.parser = new ErbParser();
         this.htmlFormatter = new HtmlFormatter();
         this.rubyFormatter = new RubyFormatter();
+        this.javascriptFormatter = new JavaScriptFormatter();
     }
 
     /**
@@ -36,7 +40,8 @@ export class ErbFormatter {
         const formattingOptions: FormattingOptions = {
             indentSize: options.tabSize || (config?.get('indentSize') ?? 2),
             useTabs: options.insertSpaces === false || (config?.get('useTabs') ?? false),
-            preserveBlankLines: config?.get('preserveBlankLines') ?? true
+            preserveBlankLines: config?.get('preserveBlankLines') ?? true,
+            formatJavaScript: config?.get('formatJavaScript') ?? true
         };
 
         try {
@@ -67,6 +72,26 @@ export class ErbFormatter {
             inlineContext = this.isInlineContext(token, prevToken, nextToken, tokens, i);
 
             switch (token.type) {
+                case 'javascript':
+                    if (options.formatJavaScript) {
+                        try {
+                            const formattedJs = require('prettier').format(token.content, {
+                                parser: 'babel',
+                                tabWidth: options.useTabs ? undefined : options.indentSize,
+                                useTabs: options.useTabs
+                            });
+                            const indent = this.getIndent(indentLevel, options);
+                            result += `${indent}${formattedJs.trim()}`;
+                        } catch (error) {
+                            const lines = token.content.split('\n');
+                            const indent = this.getIndent(indentLevel, options);
+                            result += lines.map((line: string, idx: number) => idx === 0 ? line : indent + line.trim()).join('\n');
+                        }
+                    } else {
+                        result += token.content;
+                    }
+                    break;
+
                 case 'html':
                     if (inlineContext) {
                         // For inline context, add indentation only for the first token on the line
@@ -152,7 +177,7 @@ export class ErbFormatter {
 
             // Add line break if necessary
             const nextInlineContext = nextToken ? this.isInlineContext(nextToken, token, tokens[i + 2], tokens, i + 1) : false;
-            if (token.type !== 'blank_line' && nextToken && !inlineContext && !nextInlineContext) {
+            if (token.type !== 'blank_line' && token.type !== 'javascript' && nextToken && !inlineContext && !nextInlineContext) {
                 result += '\n';
                 previousWasBlank = false;
             }
