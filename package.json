@@ -128,7 +128,11 @@
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
     "test:unit": "mocha out/test/unit/**/*.test.js",
-    "coverage": "nyc npm run test:unit"
+    "coverage": "nyc npm run test:unit",
+    "publish:patch": "./scripts/publish.sh patch",
+    "publish:minor": "./scripts/publish.sh minor",
+    "publish:major": "./scripts/publish.sh major",
+    "publish:version": "./scripts/publish.sh"
   },
   "dependencies": {
     "prettier": "^3.0.0"
